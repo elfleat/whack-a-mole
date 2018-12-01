@@ -1,0 +1,313 @@
+@import url('https://fonts.googleapis.com/css?family=Handlee');
+
+/** 
+    Global Styles
+**/
+
+* {
+    box-sizing: border-box;
+}
+
+html, body, ul, li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+body {
+    background: url(../images/grass-pattern.jpg) repeat center;
+    font-family: 'Handlee', cursive;
+    transition: all 250ms ease-in-out;
+}
+
+/**
+    Generic Global Styles
+**/
+.button {
+    cursor: pointer;
+    display: block;
+    border: none;
+    font-size: 30px;
+    font-family: 'Handlee', cursive;
+    transition: all 250ms ease-in-out;
+}
+
+.button.secondary {
+    text-transform: uppercase;
+    font-size: 18px;
+    padding: 0;
+    border-bottom: 1px solid white;
+    background: transparent;
+    color: white;
+    font-weight: bold;
+}
+
+.button.main {
+    text-transform: lowercase;
+    font-weight: bold;
+    padding: 10px 30px;
+    color: white;
+    border-radius: 10px;
+    background-image: -moz-linear-gradient( 90deg, rgb(134,2,2) 0%, rgb(177,0,0) 100%);
+    background-image: -webkit-linear-gradient( 90deg, rgb(134,2,2) 0%, rgb(177,0,0) 100%);
+    background-image: -ms-linear-gradient( 90deg, rgb(134,2,2) 0%, rgb(177,0,0) 100%);
+    box-shadow: 0px 3px 10px 0px rgba(0, 0, 0, 0.1),0px 26px 30px 0px rgba(0, 0, 0, 0.15),0px 28px 45px 0px rgba(0, 0, 0, 0.3);
+    background-color: transparent;
+}
+
+.button.main:hover, .button.main:focus {
+    transform: translate(0,-5px) scale(1.4);
+}
+
+.button.secondary:hover, .button.secondary:focus {
+    transform: translate(0,-5px) scale(1.2) rotate(-3deg);
+    letter-spacing: 2px;
+}
+
+.modal {
+    max-width: 600px;
+    position: absolute;
+    background: white;
+    z-index: 20;
+    top: 10vh;
+    left: 0;
+    right: 0;
+    width: 90vw;
+    margin: auto;
+    margin-top: -100vh;
+    min-height: 50vh;
+    background-color: rgba(32, 32, 32, 0.902);
+    box-shadow: 0px 3px 88.75px 36.25px rgba(0, 0, 0, 0.35);      
+    transition: all 250ms ease-in-out;
+}
+
+.modal.is-open {
+    margin-top: 0;
+}
+
+.modal-overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 15;
+    top: 0;
+    left: 0;
+    background: rgba(0,0,0,0.7);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 250ms ease-in-out;
+}
+
+.modal.is-open + .modal-overlay {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/** 
+    Logo
+**/
+
+.wam-logo-container {
+    margin: 120px auto;
+    text-align: center;
+    background-color: rgba(32, 32, 32, 0.788);
+    box-shadow: 0px 3px 88.75px 36.25px rgba(0, 0, 0, 0.35);
+    max-width: 500px;
+    padding: 20px;  
+    transition: all 250ms ease-in-out;
+}
+
+#wam-logo {
+    display: inline-block;
+    color: white;
+    font-size: 30px;
+}
+
+#wam-logo span {
+    display: block;
+}
+
+#wam-logo .wam-logo-left {
+    text-align: left;
+    margin-left: -15px;
+    margin-bottom: -20px;
+}
+
+#wam-logo .wam-logo-tag {
+    font-size: 25px;
+    margin-top: -20px;
+    text-align: right;
+    margin-right: -15px;
+}
+
+#wam-logo .wam-logo-center {
+    font-size: 85px;
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: -4px;
+}
+
+/** 
+    Screen: Main
+**/
+#main-screen {
+    transition: all 250ms ease-in-out;
+}
+
+#main-screen #wam-play-cta {
+    margin: 0 auto;
+}
+
+#main-screen #wam-leaderboard-cta {
+    margin: 50px auto 0;
+}
+
+
+/** 
+    Leaderboard Modal
+**/
+.leaderboard .modal-content {
+    padding: 30px;
+    position: relative;
+}
+
+.leaderboard h2 {
+    color: white;
+    font-size: 28px;
+    margin-top: 0;
+    text-transform: uppercase;
+}
+
+.leaderboard #leaderboard-close {
+    border: none;
+    position: absolute;
+    right: 30px;
+    top: 30px;
+    font-size: 24px;
+}
+
+.leaderboard .leaderboard-table {
+    padding: 0 20px 20px 20px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.leaderboard .leaderboard-table .leaderboard-item {
+    display: table;
+    width: 100%;
+    border-bottom: 1px solid rgba(255,255,255, 0.4);
+    padding-bottom: 10px;
+    margin: 10px 0 0px;
+}
+
+.leaderboard .leaderboard-table .leaderboard-item span {
+    display: table-cell;
+    color: white;
+    font-size: 30px;
+}
+
+.leaderboard .leaderboard-table .leaderboard-item .leaderboard-item-points {
+ width: 120px;
+}
+
+.leaderboard .leaderboard-table .leaderboard-item .leaderboard-item-points:after {
+    content: ' points';
+    font-size: 18px;
+}
+
+/***
+    Screen: Gameplay
+***/
+
+.app-state-game .wam-logo-container  {
+    top: 0;
+    left: 0;
+    margin: 0;
+    zoom: 0.7;
+}
+
+.app-state-game #main-screen {
+    opacity: 0;
+    top: -100vh;
+}
+
+#gameplay-screen {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.app-state-game #gameplay-screen {
+    opacity: 1;
+    pointer-events: all;
+    transition: all 250ms ease-in-out;
+}
+
+#gameplay-screen .game-countdown {
+    padding: 70px 0 0 0;
+    display: block;
+    position: absolute;
+    background: white;
+    text-align: center;
+    color: white;
+    line-height: 0.8;
+    font-size: 22px;
+    bottom: 20px;
+    right: 15px;
+    z-index: 16;
+    margin: 0 auto;
+    width: 150px;
+    height: 160px;
+    background: url(../images/stopwatch.png) center center no-repeat;
+}
+
+#gameplay-screen .game-score {
+    padding: 55px 0 0 0;
+    display: block;
+    position: absolute;
+    background: white;
+    text-align: center;
+    color: white;
+    font-size: 22px;
+    line-height: 0.8;
+    right: 0px;
+    width: 150px;
+    height: 160px;
+    background-color: rgba(32, 32, 32, 0.788);
+    box-shadow: 0px 3px 88.75px 36.25px rgba(0, 0, 0, 0.35);
+}
+
+#gameplay-screen .game-score #game-score-points, #gameplay-screen .game-countdown #game-countdown-secs {
+    font-size: 48px;
+}
+
+.gameplay-viewport {
+    max-width: 600px;
+    height: 600px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    z-index: 8;
+}
+
+.gameplay-viewport ul {
+    display: table;
+    width: 100%;
+    height: 200px;
+}
+
+.gameplay-viewport ul li {
+    display: table-cell;
+    background: red;
+    border: 1px solid black;
+}
+
+
+

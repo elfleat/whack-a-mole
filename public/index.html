@@ -4,10 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="icon" type="image/png" href="images/favicon.png" />
     <title>Whack-a-mole Online Game - by Elias Sierra</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
 <body>
-    <p>Hi Elias Sierra!</p>
+    <div id="wam-app">
+        <header>
+            <div class="wam-logo-container">
+                <h1 id="wam-logo">
+                    <span class="wam-logo-left">whack-a</span>
+                    <span class="wam-logo-center">mole</span>
+                    <span class="wam-logo-tag">by Elias Sierra</span>
+                </h1>
+            </div>
+        </header>
+
+        <section id="main-screen">
+            <button class="button main" id="wam-play-cta">Play Now</button>
+            <button class="button secondary" id="wam-leaderboard-cta">Leaderboard</button>
+
+            <section role="dialog" aria-labelledby="leaderboard-heading" id="leaderboard-modal" aria-modal="false" class="leaderboard modal">
+                <div class="modal-content">
+                    <button class="button secondary" id="leaderboard-close" aria-label="Close">x</button>
+                    <h2 id="leaderboard-heading">Leaderboard</h2>
+                    <ul class="leaderboard-table">
+                        <li class="leaderboard-item">
+                            <span class="leaderboard-item-user">elfleat</span>
+                            <span class="leaderboard-item-points">1230</span>
+                        </li>
+                        <li class="leaderboard-item">
+                            <span class="leaderboard-item-user">jvaldes</span>
+                            <span class="leaderboard-item-points">840</span>
+                        </li>
+                        <li class="leaderboard-item">
+                            <span class="leaderboard-item-user">mvanhouten</span>
+                            <span class="leaderboard-item-points">260</span>
+                        </li>
+                        <li class="leaderboard-item">
+                            <span class="leaderboard-item-user">spierre</span>
+                            <span class="leaderboard-item-points">24</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+            <div class="modal-overlay" id="leaderboard-modal-overlay"></div>
+        </section>
+
+        <section id="gameplay-screen">
+            <div class="game-countdown">
+                <div id="game-countdown-secs">25</div> seconds
+            </div>
+            <div class="game-score">
+                <div id="game-score-points">84</div> points
+            </div>
+
+            <div class="gameplay-viewport">
+                <ul>
+                    <li>
+                        <div class="game-crater">Mole</div>
+                    </li>
+                    <li>
+                        <div class="game-crater">Mole</div>
+                    </li>
+                    <li>
+                        <div class="game-crater">Mole</div>
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        <div class="game-crater">Mole</div>
+                    </li>
+                    <li>
+                        <div class="game-crater">Mole</div>
+                    </li>
+                    <li>
+                        <div class="game-crater">Mole</div>
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        <div class="game-crater">Mole</div>
+                    </li>
+                    <li>
+                        <div class="game-crater">Mole</div>
+                    </li>
+                    <li>
+                        <div class="game-crater">Mole</div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </div>
+    <script type="text/javascript" src="js/script.js"></script>
 </body>
 </html>

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon --watch ./public/* index.js",
+    "dev": "browser-sync start --port '3002' --proxy 'localhost:3000' --files 'public'",
+    "dev:nodemon": "nodemon --watch ./public/ index.js & browser-sync start --proxy 'localhost:3000' --files 'public'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,6 +20,7 @@
   },
   "homepage": "https://github.com/elfleat/whack-a-mole#readme",
   "dependencies": {
+    "browser-sync": "^2.26.3",
     "express": "^4.16.4",
     "nodemon": "^1.18.7"
   }
