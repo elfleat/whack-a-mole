@@ -1,6 +1,81 @@
 'use strict';
 
+/**
+ * Utility Methods
+ */
+function getRandom(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
+/**
+ * Modules Library
+ */
 var Library = {};
+
+Library.Scoreboard = function() {
+    var key = 'whack-a-moleScores';
+    var defaults = {
+        elfleat: 22,
+        jvaldes: 16,
+        mvanhouten: 8,
+        spierre: 21
+    };
+
+    this.init = function() {
+        var currentScore = this.get();
+
+        if(!currentScore) {
+            localStorage.setItem(key, JSON.stringify(defaults));
+        }
+
+        return this;
+    }
+
+    this.get = function() {
+        return JSON.parse(localStorage.getItem(key));
+    }
+
+    this.saveScore = function(name, score) {
+        var currentScore = this.get();
+        currentScore = currentScore && JSON.parse(currentScore);
+        currentScore[name] = score;
+        localStorage.setItem(key, JSON.stringify(currentScore));
+        return true;
+    }
+
+    return this.init();
+}
+
+Library.Timer = function(el, onDone, totalTime) {
+    var time = totalTime;
+
+    this.queryElements = function() {
+        this.el = el;
+        return this;
+    }
+
+    var timerInstance = setInterval(function(){ 
+        time -= 1;
+        this.updateTime();
+
+        if(time === 0) {
+            this.stopTimer();
+            onDone();
+        }
+
+    }.bind(this), 1000);
+
+    this.stopTimer = function() {
+        clearInterval(timerInstance);
+    }
+
+    this.updateTime = function() {
+        this.el.innerText = time;
+        return this;
+    }
+
+    return this.queryElements().updateTime();
+}
 
 Library.Modal = function(selectors) {
     
@@ -10,9 +85,9 @@ Library.Modal = function(selectors) {
 
         this.els = {
             container: container,
-            closeBtn: container.querySelector('#leaderboard-close'),
+            closeBtn: container.querySelector('.modal-close'),
             trigger: document.getElementById(selectors.trigger),
-            overlay: document.querySelector('#leaderboard-modal-overlay')
+            overlay: document.querySelector('.modal-overlay')
         };
         return this;
     }
@@ -27,6 +102,7 @@ Library.Modal = function(selectors) {
 
     // Method to open modal
     this.open = function() {
+        if(this.render) this.render(this.els);
         this.els.container.classList.add('is-open');
         this.els.container.setAttribute('aria-modal', true);
         return this;
@@ -42,10 +118,12 @@ Library.Modal = function(selectors) {
 };
 
 Library.GameApp = function(selectors) {
+    // Object to store the instances of the nested modules
+    this.modules = {};
+
     this.appState = {
         screen: 'intro',    // 'intro' || 'game' || 'over'
-        score: 0,           // Default Score (0)
-        timer: 30           // Defined in seconds
+        score: 0            // Default Score (0)
     };
 
     // Methods not available via instance api
@@ -66,7 +144,14 @@ Library.GameApp = function(selectors) {
         this.els = {
             body: document.body,
             appContainer: appContainer,
-            playNowBtn: appContainer.querySelector('#' + selectors.playNowBtn)
+            leaderboardModalContainer: appContainer.querySelector('#' + selectors.leaderboard),
+            playNowBtn: appContainer.querySelector('#' + selectors.playNowBtn),
+            timerSeconds: appContainer.querySelector('#' + selectors.timerSeconds),
+            scorePoints: appContainer.querySelector('#' + selectors.scorePoints),
+            gameViewport: appContainer.querySelector('#' + selectors.gameViewport),
+            craters: document.querySelectorAll('.' + selectors.craters),
+            saveNameBtn:  appContainer.querySelector('#' + selectors.saveNameBtn),
+            nameInput: appContainer.querySelector('#' + selectors.nameInput)
         };
 
         return this;
@@ -75,17 +160,103 @@ Library.GameApp = function(selectors) {
     // Bind events to DOM elements
     this.bindEvents = function() {
         this.els.playNowBtn.addEventListener('click', this.startGame.bind(this));
+
+        this.els.gameViewport.addEventListener('click', function(e) {
+            if(e.target.classList.contains('is-out')) {
+                this.addPoints();
+                e.target.classList.remove('is-out');
+            }
+        }.bind(this));
+        
+        this.els.saveNameBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            var name = this.els.nameInput.value;
+
+            if(!name.length) {
+                return alert('Please enter your name.');
+            }
+
+            updateAppState('intro');
+            this.modules.scoreBoard.saveScore(name, this.appState.score);
+
+            // Reset Score
+            this.appState.score = 0;
+            this.modules.leaderboardModal.open();
+
+        }.bind(this));
+
         return this;
     }
 
     this.initApp = function() {
         updateAppState('intro');
+
+        this.modules.scoreBoard = Library.Scoreboard();
+
+        this.modules.leaderboardModal = new window.Library.Modal({
+            container: 'leaderboard-modal',
+            trigger: 'wam-leaderboard-cta',
+            leaderboard: 'leaderboard-modal'
+        }, this.modules.scoreBoard);
+
+        this.modules.leaderboardModal.render = function(els) {
+            var currentScores = this.modules.scoreBoard.get();
+            var listHtml = '';
+
+            var itemHtml = function(name, score) {
+                var outputHtml = '<li class="leaderboard-item">'
+                + '<span class="leaderboard-item-user">' + name + '</span>'
+                + '<span class="leaderboard-item-points">' + score + '</span>'
+                + '</li>'
+                return outputHtml;
+            }
+
+            Object.keys(currentScores).forEach(function(name, score) {
+                listHtml += itemHtml(name, score);
+            })
+
+            console.log(listHtml);
+        }.bind(this);
+
         return this;
     }
 
-    this.startGame = function() {
-        updateAppState('game');
+    this.addPoints = function() {
+        this.appState.score += 4;
+        this.els.scorePoints.innerText = this.appState.score;
         return this;
+    }
+
+    this.toggleMole = function() {
+        var crater = this.els.craters[getRandom(0, this.els.craters.length)];
+        crater.classList.add('is-out');
+
+        setTimeout(function() {
+            crater.classList.remove('is-out');
+        }.bind(this), 1200);
+    }
+
+    this.setUpCrater = function(delay) {
+        setTimeout(this.toggleMole.bind(this), delay);
+    }
+
+    this.startGame = function() {
+        var totalGameTime = 10;
+        var i = 0;
+
+        updateAppState('game');
+        this.modules.timer = new Library.Timer(this.els.timerSeconds, this.endGame.bind(this), totalGameTime);
+
+        while (i < 20) {
+            this.setUpCrater(getRandom(0, totalGameTime) * 1000);
+            i++;
+        }
+
+        return this;
+    }
+
+    this.endGame = function() {
+        updateAppState('game-over');
     }
 
     return this.queryElements().bindEvents().initApp();
@@ -94,18 +265,15 @@ Library.GameApp = function(selectors) {
 window.Library = Library;
 
 (function() {
-    console.log('We\'re ready.');
-    var leaderboardModalEl = document.getElementById('leaderboard-modal');
-
+    console.info('Welcome to Whack-a-Mole.');
     window.app = new Library.GameApp({
         appContainer: 'wam-app',
-        playNowBtn: 'wam-play-cta'
+        playNowBtn: 'wam-play-cta',
+        timerSeconds: 'game-countdown-secs',
+        scorePoints: 'game-score-points',
+        gameViewport: 'game-screen',
+        craters: 'game-mole',
+        saveNameBtn: 'save-name-cta',
+        nameInput: 'game-over-name'
     });
-
-    if(leaderboardModalEl) {
-        window.leaderboardModal = new window.Library.Modal({
-            container: 'leaderboard-modal',
-            trigger: 'wam-leaderboard-cta'
-        });
-    }
 }());
