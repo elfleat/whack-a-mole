@@ -26,74 +26,91 @@
 
             <section role="dialog" aria-labelledby="leaderboard-heading" id="leaderboard-modal" aria-modal="false" class="leaderboard modal">
                 <div class="modal-content">
-                    <button class="button secondary" id="leaderboard-close" aria-label="Close">x</button>
+                    <button class="button secondary modal-close" aria-label="Close">x</button>
                     <h2 id="leaderboard-heading">Leaderboard</h2>
                     <ul class="leaderboard-table">
                         <li class="leaderboard-item">
                             <span class="leaderboard-item-user">elfleat</span>
-                            <span class="leaderboard-item-points">1230</span>
-                        </li>
-                        <li class="leaderboard-item">
-                            <span class="leaderboard-item-user">jvaldes</span>
-                            <span class="leaderboard-item-points">840</span>
-                        </li>
-                        <li class="leaderboard-item">
-                            <span class="leaderboard-item-user">mvanhouten</span>
-                            <span class="leaderboard-item-points">260</span>
-                        </li>
-                        <li class="leaderboard-item">
-                            <span class="leaderboard-item-user">spierre</span>
-                            <span class="leaderboard-item-points">24</span>
+                            <span class="leaderboard-item-points">23</span>
                         </li>
                     </ul>
                 </div>
             </section>
-            <div class="modal-overlay" id="leaderboard-modal-overlay"></div>
+            <div class="modal-overlay"></div>
         </section>
 
         <section id="gameplay-screen">
             <div class="game-countdown">
-                <div id="game-countdown-secs">25</div> seconds
+                <div id="game-countdown-secs"></div> seconds
             </div>
             <div class="game-score">
-                <div id="game-score-points">84</div> points
+                <div id="game-score-points">0</div> points
             </div>
 
-            <div class="gameplay-viewport">
+            <div class="gameplay-viewport" id="game-screen">
                 <ul>
                     <li>
-                        <div class="game-crater">Mole</div>
+                        <div class="game-crater">
+                            <a href="javascript:void(0)" class="game-mole"></a>
+                        </div>
                     </li>
                     <li>
-                        <div class="game-crater">Mole</div>
+                        <div class="game-crater">
+                            <a href="javascript:void(0)" class="game-mole"></a>
+                        </div>
                     </li>
                     <li>
-                        <div class="game-crater">Mole</div>
+                        <div class="game-crater">
+                            <a href="javascript:void(0)" class="game-mole"></a>
+                        </div>
                     </li>
                 </ul>
                 <ul>
                     <li>
-                        <div class="game-crater">Mole</div>
+                        <div class="game-crater">
+                            <a href="javascript:void(0)" class="game-mole"></a>
+                        </div>
                     </li>
                     <li>
-                        <div class="game-crater">Mole</div>
+                        <div class="game-crater">
+                            <a href="javascript:void(0)" class="game-mole"></a>
+                        </div>
                     </li>
                     <li>
-                        <div class="game-crater">Mole</div>
+                        <div class="game-crater">
+                            <a href="javascript:void(0)" class="game-mole"></a>
+                        </div>
                     </li>
                 </ul>
                 <ul>
                     <li>
-                        <div class="game-crater">Mole</div>
+                        <div class="game-crater">
+                            <a href="javascript:void(0)" class="game-mole"></a>
+                        </div>
                     </li>
                     <li>
-                        <div class="game-crater">Mole</div>
+                        <div class="game-crater">
+                            <a href="javascript:void(0)" class="game-mole"></a>
+                        </div>
                     </li>
                     <li>
-                        <div class="game-crater">Mole</div>
+                        <div class="game-crater">
+                            <a href="javascript:void(0)" class="game-mole"></a>
+                        </div>
                     </li>
                 </ul>
             </div>
+
+            <section class="game-over-flyout" id="game-over">
+                <h2>Gameover</h2>
+                <div class="game-over-score">
+                    <span class="score">26</span> points
+                </div>
+                <form>
+                    <input type="text" id="game-over-name" placeholder="Your name">
+                    <button class="button main game-over-cta" id="save-name-cta">Save</button>
+                </form>
+            </section>
         </section>
     </div>
     <script type="text/javascript" src="js/script.js"></script>

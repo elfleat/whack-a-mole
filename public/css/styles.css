@@ -178,12 +178,13 @@ body {
     text-transform: uppercase;
 }
 
-.leaderboard #leaderboard-close {
+.modal .modal-close {
     border: none;
     position: absolute;
     right: 30px;
     top: 30px;
     font-size: 24px;
+    border: none;
 }
 
 .leaderboard .leaderboard-table {
@@ -219,14 +220,14 @@ body {
     Screen: Gameplay
 ***/
 
-.app-state-game .wam-logo-container  {
+.app-state-game .wam-logo-container, .app-state-game-over .wam-logo-container  {
     top: 0;
     left: 0;
     margin: 0;
     zoom: 0.7;
 }
 
-.app-state-game #main-screen {
+.app-state-game #main-screen, .app-state-game-over #main-screen {
     opacity: 0;
     top: -100vh;
 }
@@ -241,7 +242,7 @@ body {
     pointer-events: none;
 }
 
-.app-state-game #gameplay-screen {
+.app-state-game #gameplay-screen, .app-state-game-over #gameplay-screen {
     opacity: 1;
     pointer-events: all;
     transition: all 250ms ease-in-out;
@@ -305,9 +306,107 @@ body {
 
 .gameplay-viewport ul li {
     display: table-cell;
-    background: red;
-    border: 1px solid black;
+    position: relative;
+    width: 33%;
 }
 
+/***
+    Mole Crater
+***/
 
+.game-crater {
+    height: 100%;
+    background: url(../images/crater.png) center center no-repeat;
+    background-size: contain;
+}
 
+.game-crater:before {
+    display: block;
+    content: ' ';
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    background: url(../images/crater-overlay.png) center center no-repeat;
+    background-size: contain;
+    z-index: 5;
+}
+
+.game-mole {
+    position: absolute;
+    bottom: 30px;
+    height: 0px;
+    width: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: url(../images/mole.png) top center no-repeat;
+    background-size: contain;
+    transition: all 250ms ease-in-out;
+    pointer-events: none;
+}
+
+.game-mole.is-out {
+    height: 120px;
+    pointer-events: all;
+}
+
+/**
+    Game Over Flyout
+**/
+
+.game-over-flyout {
+    max-width: 600px;
+    position: absolute;
+    background: white;
+    z-index: 20;
+    top: 50%;
+    left: 0;
+    right: 0;
+    width: 90vw;
+    margin: auto;
+    height: 350px;
+    text-align: center;
+    transform: translateY(-50%);
+    margin-top: -100vh;
+    background-color: rgba(32, 32, 32, 0.902);
+    box-shadow: 0px 3px 88.75px 36.25px rgba(0, 0, 0, 0.35);      
+    transition: all 250ms ease-in-out;
+}
+
+.app-state-game-over .game-over-flyout {
+    margin-top: 0;
+}
+
+.game-over-flyout h2 {
+    color: white;
+    font-size: 50px;
+    padding: 20px 25px 0px;
+    margin: 10px 0;
+}
+
+.game-over-flyout input[type="text"] {
+    padding: 4px;
+    border-radius: 4px;
+    border: none;
+    font-size: 24px;
+    font-family: 'Handlee', cursive;
+}
+
+.game-over-flyout .game-over-score {
+    color: white;
+    font-size: 22px;
+    line-height: 0.8;
+    margin-bottom: 20px;
+}
+
+.game-over-flyout .game-over-score .score{
+    font-size: 55px;
+    display: block;
+    font-weight: bold;
+}
+
+.game-over-flyout .game-over-cta {
+    margin: 15px auto;
+}
