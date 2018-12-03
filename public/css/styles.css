@@ -410,3 +410,25 @@ body {
 .game-over-flyout .game-over-cta {
     margin: 15px auto;
 }
+
+/***
+    Media Queries
+***/
+@media only screen and (max-width: 499px) {
+    #gameplay-screen .game-score {
+        top: auto;
+        bottom: -20px;
+        left: 0;
+        right: auto;
+    }
+
+    #gameplay-screen .game-countdown {
+        bottom: -20px;
+    }
+
+    .app-state-game .wam-logo-container, .app-state-game-over .wam-logo-container {
+        margin-top: -30px;
+        width: 100%;
+        max-width: 100%;
+    }
+}

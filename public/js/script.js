@@ -15,7 +15,7 @@ var Library = {};
 Library.Scoreboard = function() {
     var key = 'whack-a-moleScores';
     var defaults = {
-        elfleat: 22,
+        elfleat: 48,
         jvaldes: 16,
         mvanhouten: 8,
         spierre: 21
@@ -37,7 +37,6 @@ Library.Scoreboard = function() {
 
     this.saveScore = function(name, score) {
         var currentScore = this.get();
-        currentScore = currentScore && JSON.parse(currentScore);
         currentScore[name] = score;
         localStorage.setItem(key, JSON.stringify(currentScore));
         return true;
@@ -151,7 +150,8 @@ Library.GameApp = function(selectors) {
             gameViewport: appContainer.querySelector('#' + selectors.gameViewport),
             craters: document.querySelectorAll('.' + selectors.craters),
             saveNameBtn:  appContainer.querySelector('#' + selectors.saveNameBtn),
-            nameInput: appContainer.querySelector('#' + selectors.nameInput)
+            nameInput: appContainer.querySelector('#' + selectors.nameInput),
+            gameOverScore: appContainer.querySelector('#' + selectors.gameOverScore)
         };
 
         return this;
@@ -199,27 +199,30 @@ Library.GameApp = function(selectors) {
             leaderboard: 'leaderboard-modal'
         }, this.modules.scoreBoard);
 
-        this.modules.leaderboardModal.render = function(els) {
-            var currentScores = this.modules.scoreBoard.get();
-            var listHtml = '';
-
-            var itemHtml = function(name, score) {
-                var outputHtml = '<li class="leaderboard-item">'
-                + '<span class="leaderboard-item-user">' + name + '</span>'
-                + '<span class="leaderboard-item-points">' + score + '</span>'
-                + '</li>'
-                return outputHtml;
-            }
-
-            Object.keys(currentScores).forEach(function(name, score) {
-                listHtml += itemHtml(name, score);
-            })
-
-            console.log(listHtml);
-        }.bind(this);
+        // Set custom render method for Modal instance
+        this.modules.leaderboardModal.render =  this.renderLeaderBoard.bind(this);
 
         return this;
     }
+
+    this.renderLeaderBoard = function(els) {
+        var currentScores = this.modules.scoreBoard.get();
+        var listHtml = '';
+
+        var itemHtml = function(name, score) {
+            var outputHtml = '<li class="leaderboard-item">'
+            + '<span class="leaderboard-item-user">' + name + '</span>'
+            + '<span class="leaderboard-item-points">' + score + '</span>'
+            + '</li>'
+            return outputHtml;
+        }
+
+        Object.keys(currentScores).forEach(function(name) {
+            listHtml += itemHtml(name, currentScores[name]);
+        })
+
+        els.container.querySelector('.leaderboard-table').innerHTML = listHtml;
+    };
 
     this.addPoints = function() {
         this.appState.score += 4;
@@ -241,7 +244,7 @@ Library.GameApp = function(selectors) {
     }
 
     this.startGame = function() {
-        var totalGameTime = 10;
+        var totalGameTime = 30;
         var i = 0;
 
         updateAppState('game');
@@ -256,6 +259,7 @@ Library.GameApp = function(selectors) {
     }
 
     this.endGame = function() {
+        this.els.gameOverScore.innerText = this.appState.score;
         updateAppState('game-over');
     }
 
@@ -274,6 +278,7 @@ window.Library = Library;
         gameViewport: 'game-screen',
         craters: 'game-mole',
         saveNameBtn: 'save-name-cta',
-        nameInput: 'game-over-name'
+        nameInput: 'game-over-name',
+        gameOverScore: 'game-over-score'
     });
 }());
