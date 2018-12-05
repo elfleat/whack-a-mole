@@ -333,6 +333,7 @@ Library.GameApp = function(selectors) {
         }
 
         this.modules.timer.resetTimer().startTimer();
+        this.appState.gameOn = true;
 
         return this;
     }
