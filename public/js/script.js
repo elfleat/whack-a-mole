@@ -130,6 +130,7 @@ Library.GameApp = function(selectors) {
     this.modules = {};
 
     this.appState = {
+        gameOn: false,
         totalGameTime: 30,
         screen: 'intro',    // 'intro' || 'game' || 'over'
         score: 0            // Default Score (0)
@@ -183,7 +184,7 @@ Library.GameApp = function(selectors) {
 
         // Bind Mole Click
         this.els.gameViewport.addEventListener('click', function(e) {
-            if(e.target.classList.contains('is-out')) {
+            if(e.target.classList.contains('is-out') && this.appState.gameOn) {
                 this.addPoints();
                 e.target.classList.remove('is-out');
             }
@@ -283,11 +284,19 @@ Library.GameApp = function(selectors) {
     }
 
     this.resetGame = function() {
-        this.stopGame().resetPoints().startGame();
+        this.stopGame().hideAllMoles().resetPoints().startGame();
     }
 
     this.stopGame = function() {
         this.modules.timer.stopTimer();
+        this.appState.gameOn = false;
+        return this;
+    }
+
+    this.hideAllMoles = function() {
+        this.moleQueue.forEach(function(moleItem) {
+            this.hideMole(moleItem.crater);
+        }.bind(this));
         return this;
     }
 
@@ -331,6 +340,7 @@ Library.GameApp = function(selectors) {
     this.endGame = function() {
         this.els.gameOverScore.innerText = this.appState.score;
         this.resetPoints();
+        this.appState.gameOn = false;
         updateAppState('game-over');
     }
 
