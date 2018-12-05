@@ -45,7 +45,8 @@ Library.Scoreboard = function() {
     return this.init();
 }
 
-Library.Timer = function(el, onDone, totalTime) {
+Library.Timer = function(el, onDone, totalTime, onTimeSwitch) {
+    this.totalTime = totalTime;
     var time = totalTime;
 
     this.queryElements = function() {
@@ -53,27 +54,35 @@ Library.Timer = function(el, onDone, totalTime) {
         return this;
     }
 
-    var timerInstance = setInterval(function(){ 
-        time -= 1;
-        this.updateTime();
-
-        if(time === 0) {
-            this.stopTimer();
-            onDone();
-        }
-
-    }.bind(this), 1000);
-
+    this.startTimer = function() {
+        this.timerInstance = setInterval(function(){ 
+            onTimeSwitch(time);
+            time -= 1;
+            this.updateTimer();
+    
+            if(time === 0) {
+                this.stopTimer();
+                onDone();
+            }
+        }.bind(this), 1000);
+    }.bind(this);
+    
     this.stopTimer = function() {
-        clearInterval(timerInstance);
+        clearInterval(this.timerInstance);
     }
 
-    this.updateTime = function() {
+    this.updateTimer = function() {
         this.el.innerText = time;
         return this;
     }
 
-    return this.queryElements().updateTime();
+    this.resetTimer = function() {
+        this.stopTimer();
+        time = this.totalTime;
+        return this;
+    }
+
+    return this.queryElements().updateTimer();
 }
 
 Library.Modal = function(selectors) {
@@ -121,6 +130,7 @@ Library.GameApp = function(selectors) {
     this.modules = {};
 
     this.appState = {
+        totalGameTime: 30,
         screen: 'intro',    // 'intro' || 'game' || 'over'
         score: 0            // Default Score (0)
     };
@@ -151,7 +161,9 @@ Library.GameApp = function(selectors) {
             craters: document.querySelectorAll('.' + selectors.craters),
             saveNameBtn:  appContainer.querySelector('#' + selectors.saveNameBtn),
             nameInput: appContainer.querySelector('#' + selectors.nameInput),
-            gameOverScore: appContainer.querySelector('#' + selectors.gameOverScore)
+            gameOverScore: appContainer.querySelector('#' + selectors.gameOverScore),
+            resetBtn: appContainer.querySelector('#' + selectors.resetBtn),
+            stopBtn: appContainer.querySelector('#' + selectors.stopBtn)
         };
 
         return this;
@@ -159,15 +171,33 @@ Library.GameApp = function(selectors) {
 
     // Bind events to DOM elements
     this.bindEvents = function() {
+
+        // Bind Play Button
         this.els.playNowBtn.addEventListener('click', this.startGame.bind(this));
 
+        // Bind Reset Button
+        this.els.resetBtn.addEventListener('click', this.resetGame.bind(this));
+
+        // Bind Stop Button
+        this.els.stopBtn.addEventListener('click', this.stopGame.bind(this));
+
+        // Bind Mole Click
         this.els.gameViewport.addEventListener('click', function(e) {
             if(e.target.classList.contains('is-out')) {
                 this.addPoints();
                 e.target.classList.remove('is-out');
             }
         }.bind(this));
+
+        // Bind Mousedown for drag & drop
+        this.els.gameViewport.addEventListener('mousedown', function(e) {
+            var isMole = e.target.classList.contains('game-mole');
+
+            // Avoids Moles being "dragged"
+            if(isMole) return e.preventDefault();
+        }.bind(this));
         
+        // Bind Score Name Form
         this.els.saveNameBtn.addEventListener('click', function(e) {
             e.preventDefault();
             var name = this.els.nameInput.value;
@@ -202,6 +232,13 @@ Library.GameApp = function(selectors) {
         // Set custom render method for Modal instance
         this.modules.leaderboardModal.render =  this.renderLeaderBoard.bind(this);
 
+        this.modules.timer = new Library.Timer(
+            this.els.timerSeconds,
+            this.endGame.bind(this),
+            this.appState.totalGameTime,
+            this.checkForMoles.bind(this)
+        );
+
         return this;
     }
 
@@ -230,36 +267,70 @@ Library.GameApp = function(selectors) {
         return this;
     }
 
-    this.toggleMole = function() {
-        var crater = this.els.craters[getRandom(0, this.els.craters.length)];
+
+    this.resetPoints = function() {
+        this.appState.score = 0;
+        this.els.scorePoints.innerText = this.appState.score;
+        return this;
+    }
+
+    this.showMole = function(crater) {
         crater.classList.add('is-out');
-
-        setTimeout(function() {
-            crater.classList.remove('is-out');
-        }.bind(this), 1200);
     }
 
-    this.setUpCrater = function(delay) {
-        setTimeout(this.toggleMole.bind(this), delay);
+    this.hideMole = function(crater) {
+        crater.classList.remove('is-out');
     }
+
+    this.resetGame = function() {
+        this.stopGame().resetPoints().startGame();
+    }
+
+    this.stopGame = function() {
+        this.modules.timer.stopTimer();
+        return this;
+    }
+
+    this.checkForMoles = function(currentSecond) {
+        this.moleQueue.forEach(function(moleItem) {
+            if(moleItem.intro === currentSecond) {
+                this.showMole(moleItem.crater);
+            }
+
+            if((moleItem.outro) === currentSecond) {
+                this.hideMole(moleItem.crater);
+            }
+        }.bind(this));
+    };
 
     this.startGame = function() {
-        var totalGameTime = 30;
         var i = 0;
+        this.moleQueue = [];
 
         updateAppState('game');
-        this.modules.timer = new Library.Timer(this.els.timerSeconds, this.endGame.bind(this), totalGameTime);
 
         while (i < 20) {
-            this.setUpCrater(getRandom(0, totalGameTime) * 1000);
+            var introTime = getRandom(0, this.appState.totalGameTime);
+
+            this.moleQueue.push({
+                // Time in which the mole will get out of its crate
+                intro: introTime,
+                // Time for the mole to be out of its crate
+                outro: introTime - getRandom(1, 5),
+                // Actual Crate dom element
+                crater: this.els.craters[getRandom(0, this.els.craters.length)]
+            });
             i++;
         }
+
+        this.modules.timer.resetTimer().startTimer();
 
         return this;
     }
 
     this.endGame = function() {
         this.els.gameOverScore.innerText = this.appState.score;
+        this.resetPoints();
         updateAppState('game-over');
     }
 
@@ -279,6 +350,8 @@ window.Library = Library;
         craters: 'game-mole',
         saveNameBtn: 'save-name-cta',
         nameInput: 'game-over-name',
-        gameOverScore: 'game-over-score'
+        gameOverScore: 'game-over-score',
+        resetBtn: 'game-refresh-button',
+        stopBtn: 'game-stop-button'
     });
 }());
